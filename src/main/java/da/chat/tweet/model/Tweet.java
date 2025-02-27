@@ -6,12 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
 @Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 
@@ -21,33 +21,83 @@ public class Tweet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idTweet;
 
-    @ManyToOne
-    @JoinColumn(name = "idUser" , nullable = false)
-    private Users users;
+    @Column(name = "contenido", nullable = false, length = 280) // Asegúrate de que el nombre coincida con la columna en la base de datos
+    private String contenido;
 
-    @Column(nullable = false , length = 280)
-    private String content;
-
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(nullable = false)
-    private Date publicationDate;
+    @Column(name = "fecha_publicacion", nullable = false, updatable = false) // Asegúrate de que el nombre coincida con la columna en la base de datos
+    private Date fechaPublicacion;
 
-    @Column(nullable = false)
-    private Integer numLikes = 0;
+    @Column(nullable = true) // Permitir valores nulos
+    private Integer retweets;
 
-    @Column(nullable = false)
-    private Integer numRetweets = 0;
+    @Column(nullable = true) // Permitir valores nulos
+    private Integer likes;
 
-    @Column(nullable = false)
-    private Integer numComments = 0;
+    // Relación muchos a uno con la entidad Users
+    @ManyToOne
+    @JoinColumn(name = "id_user", nullable = false) // Asegúrate de que el nombre coincida con la columna en la base de datos
+    private Users usuario;
+
+    // Constructor con parámetros
+    public Tweet(String contenido, Users usuario) {
+        this.contenido = contenido;
+        this.usuario = usuario;
+        this.retweets = 0; // Inicializar con 0 si es necesario
+        this.likes = 0; // Inicializar con 0 si es necesario
+    }
+
+    // Constructor sin argumentos (necesario para JPA)
+    public Tweet() {}
+
+    public Integer getIdTweet() {
+        return idTweet;
+    }
+
+    public void setIdTweet(Integer idTweet) {
+        this.idTweet = idTweet;
+    }
+
+    public String getContenido() {
+        return contenido;
+    }
+
+    public void setContenido(String contenido) {
+        this.contenido = contenido;
+    }
+
+    public Date getFechaPublicacion() {
+        return fechaPublicacion;
+    }
+
+    public void setFechaPublicacion(Date fechaPublicacion) {
+        this.fechaPublicacion = fechaPublicacion;
+    }
+
+    public Integer getRetweets() {
+        return retweets;
+    }
+
+    public void setRetweets(Integer retweets) {
+        this.retweets = retweets;
+    }
+
+    public Integer getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Integer likes) {
+        this.likes = likes;
+    }
+
+    public Users getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Users usuario) {
+        this.usuario = usuario;
+    }
 }
 
-/*2. *Tweet*
-   - TweetID (PK)
-   - UsuarioID (FK) (relación con Usuario)
-   - Contenido
-   - FechaPublicación
-   - NumLikes
-   - NumRetweets
-   - NumComentarios*/
 

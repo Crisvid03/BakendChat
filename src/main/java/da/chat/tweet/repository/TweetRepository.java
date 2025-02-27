@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface TweetRepository extends JpaRepository<Tweet , Integer> {
-    List<Tweet> findByUsersId(Integer idUsuario);
+public interface TweetRepository extends JpaRepository<Tweet, Integer> {
+    // Buscar todos los tweets de un usuario
+    List<Tweet> findByUsuarioIdUser(Integer idUser);
 }

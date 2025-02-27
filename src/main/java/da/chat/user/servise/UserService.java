@@ -5,11 +5,15 @@ import java.util.List;
 
 public interface UserService  {
 
-    public List<Users> mostrarUsuarios();
+    List<Users> mostrarUsuarios();
 
-    public  Users flitrarUsuarioPorId(Integer idUser);
+    Users flitrarUsuarioPorId(Integer idUser);
 
-    public Users guardarUsuario(Users users);
+    Users guardarUsuario(Users users);
 
-    public void eliminarUsuario(Users users);
+    void eliminarUsuario(Users users);
+
+    Users autenticarUsuario(String userName, String password);
+
+
 }
