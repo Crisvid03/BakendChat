@@ -10,5 +10,5 @@ public interface TweetService {
     Tweet crearTweet(String contenido, Users usuario);
     List<Tweet> obtenerTweetsPorUsuario(Integer idUser);
     void darLikeATweet(Integer idTweet);
-    void hacerRetweet(Integer idTweet);
+    void hacerRetweet(Integer idTweet, Users usuario);
 }

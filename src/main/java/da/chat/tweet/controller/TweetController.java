@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/tweets")
@@ -21,12 +22,14 @@ public class TweetController {
     @Autowired
     private UserService userService;
 
+    // Endpoint para obtener todos los tweets
     @GetMapping
     public ResponseEntity<List<Tweet>> obtenerTodosLosTweets() {
         List<Tweet> tweets = tweetService.obtenerTodosLosTweets();
         return ResponseEntity.ok(tweets);
     }
 
+    // Endpoint para crear un tweet
     @PostMapping("/guardar")
     public ResponseEntity<?> crearTweet(
             @RequestParam String contenido,
@@ -50,21 +53,45 @@ public class TweetController {
         }
     }
 
+    // Endpoint para obtener todos los tweets de un usuario
     @GetMapping("/usuario/{idUser}")
     public ResponseEntity<List<Tweet>> obtenerTweetsPorUsuario(@PathVariable Integer idUser) {
         List<Tweet> tweets = tweetService.obtenerTweetsPorUsuario(idUser);
         return ResponseEntity.ok(tweets);
     }
 
+    // Endpoint para dar like a un tweet
     @PostMapping("/{idTweet}/like")
     public ResponseEntity<String> darLikeATweet(@PathVariable Integer idTweet) {
         tweetService.darLikeATweet(idTweet);
         return ResponseEntity.ok("Like agregado al tweet con ID: " + idTweet);
     }
 
-    @PostMapping("/{idTweet}/retweet")
-    public ResponseEntity<String> hacerRetweet(@PathVariable Integer idTweet) {
-        tweetService.hacerRetweet(idTweet);
-        return ResponseEntity.ok("Retweet agregado al tweet con ID: " + idTweet);
+    // Endpoint para hacer un retweet
+    @PostMapping("/retweet")
+    public ResponseEntity<?> hacerRetweet(@RequestBody Map<String, Integer> requestBody) {
+        try {
+            // Obtener los parámetros del cuerpo de la solicitud
+            Integer idUser = requestBody.get("idUser");
+            Integer idTweet = requestBody.get("idTweet");
+
+            // Validar que los valores no sean nulos
+            if (idUser == null || idTweet == null) {
+                return ResponseEntity.badRequest().body("Faltan parámetros: idUser y/o idTweet");
+            }
+
+            // Buscar usuario
+            Users usuario = userService.flitrarUsuarioPorId(idUser);
+            if (usuario == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado con ID: " + idUser);
+            }
+
+            // Hacer el retweet
+            tweetService.hacerRetweet(idTweet, usuario);
+            return ResponseEntity.ok("Retweet agregado correctamente al tweet con ID: " + idTweet);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 }

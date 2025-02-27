@@ -40,16 +40,50 @@ public class Tweet {
     @JoinColumn(name = "id_user", nullable = false) // Asegúrate de que el nombre coincida con la columna en la base de datos
     private Users usuario;
 
-    // Constructor con parámetros
+    // Nuevo campo para identificar si es un retweet
+    @Column(name = "es_retweet", nullable = false)
+    private boolean esRetweet = false;
+
+    // Nuevo campo para almacenar el ID del tweet original (si es un retweet)
+    @Column(name = "id_tweet_original", nullable = true)
+    private Integer idTweetOriginal;
+
+    // Constructor para tweets normales
     public Tweet(String contenido, Users usuario) {
         this.contenido = contenido;
         this.usuario = usuario;
-        this.retweets = 0; // Inicializar con 0 si es necesario
-        this.likes = 0; // Inicializar con 0 si es necesario
+        this.retweets = 0;
+        this.likes = 0;
+        this.esRetweet = false;
+    }
+
+    // Constructor para retweets
+    public Tweet(Users usuario, Integer idTweetOriginal) {
+        this.usuario = usuario;
+        this.idTweetOriginal = idTweetOriginal;
+        this.esRetweet = true;
+        this.retweets = 0;
+        this.likes = 0;
     }
 
     // Constructor sin argumentos (necesario para JPA)
     public Tweet() {}
+
+    public boolean isEsRetweet() {
+        return esRetweet;
+    }
+
+    public void setEsRetweet(boolean esRetweet) {
+        this.esRetweet = esRetweet;
+    }
+
+    public Integer getIdTweetOriginal() {
+        return idTweetOriginal;
+    }
+
+    public void setIdTweetOriginal(Integer idTweetOriginal) {
+        this.idTweetOriginal = idTweetOriginal;
+    }
 
     public Integer getIdTweet() {
         return idTweet;
